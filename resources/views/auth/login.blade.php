@@ -13,9 +13,9 @@
               <h1>Acceder</h1>
 
               <p class="text-muted">Acceso al sistema</p>
-              
+
               <!--agregamos una verificacion si se lanza una excepcion en el campo usuario -->
-              <div class="form-group mb-3 {{ $errors->has('username' ? 'is-invalid': '')}}"}>           
+              <div class="form-group mb-3 {{ $errors->has('username' ? 'is-invalid': '')}}"}>
                 <span class="form-group-addon"><i class="icon-user"></i></span>
                 <input type="text" name="username" id="username" class="form-control" placeholder="Usuario" value="{{ old('username') }}"style="border-color:red">
                 {!!$errors->first('username','<span class="invalid-feedback">:message</span>')!!}
@@ -24,19 +24,16 @@
               <div class="form-group mb-4 {{ $errors->has('password' ? 'is-invalid': '')}}">
                 <span class="form-group-addon"><i class="icon-lock"></i></span>
                 <input type="password" name="password" id="password" class="form-control" placeholder="Password" style="border-color:red">
-                {!!$errors->first('password','<span class="invalid-feedback">:message</span>')!!} 
+                {!!$errors->first('password','<span class="invalid-feedback">:message</span>')!!}
               </div>
               <!-- Verificacion de errores de laravel -->
-              
-              
-
               <div class="row">
                 <div class="col-6">
                   <button type="submit" class="btn btn-danger px-4">Acceder</button>
                 </div>
 
                 <div class="col-6 text-right" >
-                  <button type="button" class="btn btn-link px-0" style="color:red">Recuperar password </button>
+                  <a href="{{route('auth.forgot')}}" class="btn btn-link px-0" style="color:red">Recuperar Contraseña</a>
                 </div>
               </div>
             </form>

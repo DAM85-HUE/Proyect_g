@@ -183,7 +183,48 @@ function loadPage(url) {
 */
 
 $(document).ready(function($){
-
+  $(".resetpassword").submit(function (e) {
+    e.preventDefault();
+    if($("input[name=username]").val().length>0){
+      $.ajax({
+        method:$(this).attr('method'),
+        url:$(this).attr('action'),
+        data:$(this).serialize(),
+        headers: {'X-CSRF-TOKEN':$('input[name=_token]').val()},
+        success: function (response) {
+          if(response.status){
+            alert("Te hemos enviado un correo a tu cuenta: "+response.email+". para que puedas recuperar tu contraseña.")
+            $("input").val("");
+          }else{
+            alert("No se encontro algun usuario con ese nick.")
+          }
+        }
+      });
+    }else{
+      alert("Digita tu nombre de usuario.")
+    }
+  })
+  $("form.forgotPassword").submit(function (e){
+    e.preventDefault();
+    if(($("#password").val()!="" && $("#rptpassword").val()!="") && $("#password").val()== $("#rptpassword").val()){
+      $.ajax({
+        method:$(this).attr('method'),
+        url:$(this).attr('action'),
+        data:$(this).serialize(),
+        headers: {'X-CSRF-TOKEN':$('input[name=_token]').val()},
+        success: function (response) {
+          if(response.status){
+            alert("Has modificado tu contraseña satisfactoriamente.")
+            $("input").val("");
+          }else{
+            alert("Por favor verifica tu usuario o intenta mas tarde.")
+          }
+        }
+      });
+    }else{
+      alert("Contraseña y la nueva contraseña deben coincidir.")
+    }
+  })
   // Add class .active to current link - AJAX Mode off
   $.navigation.find('a').each(function(){
 
