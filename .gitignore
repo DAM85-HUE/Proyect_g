@@ -13,3 +13,4 @@ yarn-error.log
 /storage
 /bootstrap
 /storage/*
+public/img/articles/*

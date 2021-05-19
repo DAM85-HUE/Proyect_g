@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\ArticleImage;
 use Illuminate\Http\Request;
 use App\Article;
 
 class ArticleController extends Controller
 {
-    
+
     public function index(Request $request)
     {
-        if(!$request->ajax()) 
+        if(!$request->ajax())
             return redirect('/');
 
         # Variables para las busquedas
@@ -19,16 +20,18 @@ class ArticleController extends Controller
 
 
         if($text_search == '')
-            $articles = Article::join('categories','articles.category_id', '=', 'categories.id')
-                ->select('articles.id','articles.category_id', 'articles.code','articles.name','articles.sale_price','articles.description', 'articles.stock', 'articles.active', 'categories.name as category_name')
-                ->paginate(10);
-        else 
-            $articles = Article::join('categories','articles.category_id', '=', 'categories.id')
-                ->select('articles.id','articles.category_id', 'articles.code','articles.name','articles.sale_price','articles.description', 'articles.stock', 'articles.active', 'categories.name as category_name')
-                ->where('articles.'.$search_criteria, 'like', '%'. $text_search . '%')
-                ->paginate(10);
+          $articles = Article::select('articles.id', 'articles.category_id', 'articles.code', 'articles.name', 'articles.sale_price',
+            'articles.description', 'articles.stock', 'articles.active', 'categories.name as category_name')
+            ->join('categories', 'articles.category_id', '=', 'categories.id')
+            ->paginate(10);
+        else
+          $articles = Article::join('categories', 'articles.category_id', '=', 'categories.id')
+            ->select('articles.id', 'articles.category_id', 'articles.code', 'articles.name', 'articles.sale_price',
+              'articles.description', 'articles.stock', 'articles.active', 'categories.name as category_name')
+            ->where('articles.' . $search_criteria, 'like', '%' . $text_search . '%')
+            ->paginate(10);
 
-        
+
         # retornamos un array con los metodos necesarios
         # para controlar la paginacion
         return [
@@ -47,8 +50,8 @@ class ArticleController extends Controller
 
     public function store(Request $request)
     {
-        
-        if(!$request->ajax()) 
+
+        if(!$request->ajax())
             return redirect('/');
 
         $article                = new Article();
@@ -59,12 +62,16 @@ class ArticleController extends Controller
         $article->stock         = $request->stock;
         $article->category_id   = $request->category_id;
         $article->active        = true;
-
-        $article->save(); 
+        $article->save();
+        if($files = $request->file('image')){
+          $article->uploadImageCar($article->id,$files);
+        }
+        $article->images = ArticleImage::where('article_id',$article->id)->get();
+        return response()->json(['article'=>$article]);
     }
 
     public function update(Request $request){
-        if(!$request->ajax()) 
+        if(!$request->ajax())
             return redirect('/');
 
         $article                = Article::findOrFail($request->id);
@@ -74,29 +81,31 @@ class ArticleController extends Controller
         $article->sale_price    = $request->sale_price;
         $article->stock         = $request->stock;
         $article->category_id   = $request->category_id;
-     
-        $article->save(); 
+        if($files = $request->file('image')){
+          $article->uploadImageCar($article->id,$files);
+        }
+        $article->save();
     }
 
     public function changeStatus(Request $request){
 
-        if(!$request->ajax()) 
+        if(!$request->ajax())
             return redirect('/');
 
         $article = Article::findOrFail($request->id);
-       
+
         if($article->active)
             $article->active = false;
         else
             $article->active = true;
-       
-        $article->save(); 
+
+        $article->save();
     }
 
     // Busca un solo articulo dado su codigo
     public function searchArticle(Request $request){
 
-        if(!$request->ajax()) 
+        if(!$request->ajax())
             return redirect('/');
 
         $filter = $request->filter; // codigo de barras
@@ -113,7 +122,7 @@ class ArticleController extends Controller
     // es decir su stock sea > 0,
     public function searchArticleStock(Request $request){
 
-        if(!$request->ajax()) 
+        if(!$request->ajax())
             return redirect('/');
 
         $filter = $request->filter; // codigo de barras
@@ -126,14 +135,14 @@ class ArticleController extends Controller
         return ['article' => $article];
 
     }
-    
+
     // Una version de la funcion index, pero filtrando Todos
     // aquellos articulos disponibles para su venta.
     // Porque cuando se despliega el modal para agregar articulos,
     // se deben mostrar soslo los articulos disponibles
     public function getArticlesToSale(Request $request){
 
-        if(!$request->ajax()) 
+        if(!$request->ajax())
             return redirect('/');
 
         # Variables para las busquedas
@@ -146,14 +155,14 @@ class ArticleController extends Controller
                 ->select('articles.id','articles.category_id', 'articles.code','articles.name','articles.sale_price','articles.description', 'articles.stock', 'articles.active', 'categories.name as category_name')
                 ->where('articles.stock','>','0')
                 ->paginate(10);
-        else 
+        else
             $articles = Article::join('categories','articles.category_id', '=', 'categories.id')
                 ->select('articles.id','articles.category_id', 'articles.code','articles.name','articles.sale_price','articles.description', 'articles.stock', 'articles.active', 'categories.name as category_name')
                 ->where('articles.'.$search_criteria, 'like', '%'. $text_search . '%')
-                ->where('articles.stock','>','0')                
+                ->where('articles.stock','>','0')
                 ->paginate(10);
 
-        
+
         # retornamos un array con los metodos necesarios
         # para controlar la paginacion
         return [
@@ -173,12 +182,12 @@ class ArticleController extends Controller
         $articles = Article::join('categories','articles.category_id', '=', 'categories.id')
                 ->select('articles.id','articles.category_id', 'articles.code','articles.name','articles.sale_price','articles.description', 'articles.stock', 'articles.active', 'categories.name as category_name')
                 ->orderBy('articles.name','desc')->get();
-        
+
         $count = Article::count();
         $pdf = \PDF::loadView('pdf.articlespdf',['articles' => $articles, 'count'=>$count]);
         // Vista articlespdf en la carpeta pdf, se le envia el array.
         return $pdf->download('articulos.pdf');
     }
-    
+
 }
 
