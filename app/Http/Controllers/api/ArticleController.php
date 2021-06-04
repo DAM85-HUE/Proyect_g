@@ -20,13 +20,16 @@ class ArticleController extends Controller
       $search_criteria = $request->criteria;
 
       if($text_search == '')
+
         $articles = Article::join('categories','articles.category_id', '=', 'categories.id')
           ->select('articles.id','articles.category_id', 'articles.code','articles.name','articles.sale_price','articles.description', 'articles.stock', 'articles.active', 'categories.name as category_name')
+          ->with('ArticlesImages')
           ->paginate(10);
       else
         $articles = Article::join('categories','articles.category_id', '=', 'categories.id')
           ->select('articles.id','articles.category_id', 'articles.code','articles.name','articles.sale_price','articles.description', 'articles.stock', 'articles.active', 'categories.name as category_name')
           ->where('articles.'.$search_criteria, 'like', '%'. $text_search . '%')
+          ->with('ArticlesImages')
           ->paginate(10);
       $article = [
         'pagination' => [

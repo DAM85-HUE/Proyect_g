@@ -14,7 +14,10 @@ class Article extends Model
   {
     return $this->belongsTo(Category::class);
   }
+  public function ArticlesImages() {
+    return $this->hasMany(ArticleImage::class);
 
+  }
   public function uploadImageCar($article_id, $images)
   {
     $allowedfileExtension = ['pdf', 'jpg', 'png'];
@@ -24,14 +27,14 @@ class Article extends Model
     if (!file_exists($path_name)) {
       mkdir($path_name, 0777, true);
     }
-
     foreach ($images as $image) {
       $extension = $image->getClientOriginalExtension();
+
       $check = in_array($extension, $allowedfileExtension);
       if ($check) {
         $nameArticle = md5($image->getClientOriginalName());
 
-        $image->move($path_name, $nameArticle);
+        $image->move($path_name, $nameArticle.".".$extension);
 
         $image_art = new ArticleImage();
         $image_art->article_id = $article_id;

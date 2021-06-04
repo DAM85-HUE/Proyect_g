@@ -20,4 +20,5 @@ Route::group(['namespace' => 'api'], function () {
     Route::post('/articles', 'ArticleController@store');
     Route::get('/articles','ArticleController@index');
     Route::get('/categories','CategoryController@index');
+    Route::resource('/tracking','TrackingController');
 });

@@ -180,6 +180,7 @@ return [
 
     Barryvdh\DomPDF\ServiceProvider::class,
 
+
   ],
 
   /*
@@ -230,7 +231,7 @@ return [
     'View' => Illuminate\Support\Facades\View::class,
     'PDF' => Barryvdh\DomPDF\Facade::class,
     'Form' => Collective\Html\FormFacade::class,
-     'HTML' => Collective\Html\HtmlFacade::class,
+    'HTML' => Collective\Html\HtmlFacade::class,
   ],
 
 ];

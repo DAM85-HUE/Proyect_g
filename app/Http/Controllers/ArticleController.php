@@ -63,7 +63,7 @@ class ArticleController extends Controller
         $article->category_id   = $request->category_id;
         $article->active        = true;
         $article->save();
-        if($files = $request->file('image')){
+        if($files = $request->file('images')){
           $article->uploadImageCar($article->id,$files);
         }
         $article->images = ArticleImage::where('article_id',$article->id)->get();
@@ -74,6 +74,7 @@ class ArticleController extends Controller
         if(!$request->ajax())
             return redirect('/');
 
+        dd($request->name);
         $article                = Article::findOrFail($request->id);
         $article->name          = $request->name;
         $article->description   = $request->description;
@@ -81,7 +82,7 @@ class ArticleController extends Controller
         $article->sale_price    = $request->sale_price;
         $article->stock         = $request->stock;
         $article->category_id   = $request->category_id;
-        if($files = $request->file('image')){
+        if($files = $request->file('images')){
           $article->uploadImageCar($article->id,$files);
         }
         $article->save();

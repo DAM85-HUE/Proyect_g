@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "492c719c406c3e61605d2d3f6fc89d1c",
+    "content-hash": "814f81eb020ee2b98c14cb697bdfda80",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -1987,6 +1987,57 @@
                 "source": "https://github.com/sabberworm/PHP-CSS-Parser/tree/8.3.1"
             },
             "time": "2020-06-01T09:10:00+00:00"
+        },
+        {
+            "name": "saulmoralespa/coordinadora-webservice-php",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/saulmoralespa/coordinadora-webservice-php.git",
+                "reference": "d213a45e5cce3ca80108589e1ec69a37861302bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/saulmoralespa/coordinadora-webservice-php/zipball/d213a45e5cce3ca80108589e1ec69a37861302bf",
+                "reference": "d213a45e5cce3ca80108589e1ec69a37861302bf",
+                "shasum": ""
+            },
+            "require": {
+                "ext-soap": "*",
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0",
+                "vlucas/phpdotenv": "^5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Coordinadora\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Saul Morales Pacheco",
+                    "email": "info@saulmoralespa.com",
+                    "homepage": "http://saulmoralespa.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Coordinadora webservice PHP",
+            "keywords": [
+                "coordinadora",
+                "webservice"
+            ],
+            "support": {
+                "issues": "https://github.com/saulmoralespa/coordinadora-webservice-php/issues",
+                "source": "https://github.com/saulmoralespa/coordinadora-webservice-php/tree/1.0.3"
+            },
+            "time": "2020-06-17T23:55:19+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

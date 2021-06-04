@@ -11,7 +11,7 @@
             <div class="card">
                 <div class="card-header">
                     <i class="fa fa-align-justify"></i> Administación de Articulos
-                   
+
                    <!--boton de insertar categoria, no utiliza jquery para mostrar el modal -->
                     <button @click="abrirModal('register')" type="button" class="btn btn-secondary">
                         <i class="icon-plus"></i>&nbsp;Nuevo Articulo
@@ -20,22 +20,22 @@
                         <i class="icon-doc"></i>&nbsp; Generar Reporte
                     </button>
                 </div>
-                
-                
+
+
                 <div class="card-body">
                     <!-- search box -->
                     <div class="form-group row">
                       <div class="col-md-6">
                         <div class="input-group">
-                          
+
                           <!-- agregamos directivas v-model al select y al input para poder obtener sus estados-->
                           <select v-model="search_criteria" class="form-control col-md-3">
                               <option value="Nombre">Nombre</option>
                               <option value="Descripcion">Descripción</option>
                           </select>
-                          <!-- 
+                          <!--
                           - cuando una directiva comienza con @, es la forma simplificada de escribir
-                            la directiva v-on 
+                            la directiva v-on
                           - se pueden enviar los parametros text_search y search_criteria a listar(), proque
                           estan enlazados con las directivas v-model en el input y en el select-->
                           <input v-model="text_search" @keyup.enter="listar(1,text_search,search_criteria)" type="text" class="form-control" placeholder="Texto a buscar">
@@ -70,13 +70,13 @@
                                     </button> &nbsp;
 
                                     <!--boton para eliminar -->
-                                    <template v-if="article.active">  
+                                    <template v-if="article.active">
                                       <button @click="desactivar(article.id)" type="button" class="btn btn-danger btn-sm">
                                           <i class="icon-trash"></i>
                                       </button>
                                     </template>
                                     <!--si el producto está desactivado se muestra este boton para permitir activarlo-->
-                                    <template v-else>  
+                                    <template v-else>
                                       <button @click="activar(article.id)" type="button" class="btn btn-info btn-sm">
                                           <i class="icon-check"></i>
                                       </button>
@@ -101,7 +101,7 @@
                         </tbody>
                     </table>
                      <!-- End Category list table -->
-                    
+
                     <!-- pagination -->
                     <nav>
                         <ul class="pagination">
@@ -167,9 +167,9 @@
                                 <label class="col-md-3 form-control-label" for="email-input">Codigo</label>
                                 <div class="col-md-9">
                                     <input v-model="code" type="text" class="form-control" placeholder="Codigo de identificación">
-                                    <barcode :value="code" :options="{format:'EAN-13'}"> 
+                                    <barcode :value="code" :options="{format:'EAN-13'}">
                                       Generando...
-                                    </barcode> 
+                                    </barcode>
                                 </div>
                             </div>
                             <!-- stock -->
@@ -187,15 +187,20 @@
                                 </div>
                             </div>
 
-                            
+                          <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="email-input">Imagen</label>
+                            <div class="col-md-9">
+                              <input type="file" multiple name="images[]" v-on:change="onChange">
+                            </div>
+                          </div>
                             <!-- mensajes de error -->
-                            <div v-show="errorDetection" class="form-group row div-error">    
+                            <div v-show="errorDetection" class="form-group row div-error">
                                 <div class="col-md-9 text-center text-error">
                                   <div v-for="error in errorMessages" :key="error" v-text="error">
                                   </div>
                                 </div>
                             </div>
-                      
+
 
                         </form>
                     </div>
@@ -228,28 +233,28 @@
           stock        : 0,
           sale_price   : 0.0,
           article_id   : 0,
-
+          images : [],
           // la data recibida de get/article se almancena aqui
           arrayArticles :[],
           // booleano necesario para abrir y cerrar el modal
           modal : 0,
           modalTitle : '',
-          // necesaria para poder decidir el tipo de modal que se debe mostrar 
-          // segun se quiera guardar o actualizar 
-          tipoModal: '', 
-          
+          // necesaria para poder decidir el tipo de modal que se debe mostrar
+          // segun se quiera guardar o actualizar
+          tipoModal: '',
+
           // captar la detencion de errores y los mensages de error
           errorDetection : 0,
           errorMessages :[],
 
-          // objeto para manejar la paginacion de categorias 
-          pagination : {   
+          // objeto para manejar la paginacion de categorias
+          pagination : {
             'total'         : 0,
             'current_page'  : 0,
             'per_page'      : 0,
             'last_page'     : 0,
-            'from'          : 0,     
-            'to'            : 0          
+            'from'          : 0,
+            'to'            : 0
           },
           offset : 3,
 
@@ -264,7 +269,7 @@
       components: {
         'barcode': VueBarcode
       },
-      computed:{  // propiedad computada para obtener la pagina actual 
+      computed:{  // propiedad computada para obtener la pagina actual
         isActived : function(){
           return this.pagination.current_page;
         },
@@ -272,7 +277,7 @@
         pagesNumber: function(){
           if(!this.pagination.to) // si la pagina es dferente de la ultima
             return [];
-        
+
           // resta para obtener la pagina actual
           var from = this.pagination.current_page - this.offset;
           // si la pagina actual es 0 o menor, se le asigna 1 a from
@@ -280,7 +285,7 @@
             from = 1;
 
           var to = from + (this.offset * 2);
-          // si to es >= a la ultima pagina, no serial ogico 
+          // si to es >= a la ultima pagina, no serial ogico
           // y se le asigna ese valor
           if(to >= this.pagination.last_page)
             to = this.pagination.last_page;
@@ -303,7 +308,7 @@
             criteria = "name";
           else
             criteria = "description";
-            
+
 
           let url = '/article?page=' + page + '&search='+ text + '&criteria='+ criteria;
          // utilizando axios para enviar peticiones http puras
@@ -317,14 +322,17 @@
             })
             .catch(function (error) {
               // handle error
-              console.log(error.response);
+             // console.log(error.response);
             });
         },
-
+        onChange(e){
+          var files = e.target.files || e.dataTransfer.files;
+          for(var i = 0; i < files.length; i++) {
+            this.images.push(files[i]);
+          }
+        },
         listarCategorias(){
-          
           let me=this;
-         
           axios.get('category/active')
             .then(function (response) {
               //almacenamos el objeto de la respuesta (la consula a la bd)
@@ -339,18 +347,27 @@
 
         registrar(){
           let me=this;
-
+          const config = {
+            headers: { 'content-type': 'multipart/form-data' }
+          }
           if(this.validar())
             return;
 
-          axios.post('/article/new',{
-            'name'         : this.name,
-            'description'  : this.description,
-            'category_id'  : this.category_id,
-            'code'         : this.code,
-            'stock'        : this.stock,
-            'sale_price'   : this.sale_price,
-            }).then(function (response) {
+          let formData = new FormData();
+          formData.append('name', this.name);
+          formData.append('description', this.description);
+          formData.append('category_id', this.category_id);
+          formData.append('code', this.code);
+          formData.append('stock', this.stock);
+          formData.append('sale_price', this.sale_price);
+          for( let i = 0; i < this.images.length; i++ ){
+            formData.append('images['+i+']', this.images[i])
+          }
+
+
+          axios.post('/article/new',
+            formData,config
+            ).then(function (response) {
               me.cerrarModal();
               me.listar(1,'','nombre');
             }).catch(function (error) {
@@ -359,7 +376,7 @@
         },
         //la accion va a tener dos posible valores, registrar o actualizar
         abrirModal(accion, data = []){
-          
+
           this.listarCategorias();
           switch(accion){
 
@@ -378,12 +395,12 @@
               this.sale_price   =  0.0;
               this.article_id   =  0;
             break;
-            
+
             case "update":
 
               this.modal      = 1;
               this.modalTitle = "Actualizando "+ data['name'];
-              this.tipoModal  = "2";   
+              this.tipoModal  = "2";
 
               this.name        = data['name'];
               this.description = data['description'];
@@ -392,9 +409,9 @@
               this.stock        = data['stock'];
               this.sale_price   = data['sale_price'];
               this.article_id   = data['id'];
-            break;        
+            break;
           }
-        
+
         },
 
         cerrarModal(){
@@ -409,6 +426,8 @@
           this.stock        =  0;
           this.sale_price   =  0.0;
           this.article_id   =  0;
+          this.images = [];
+          this.$refs.images.value=null;
         },
 
         validar(){
@@ -416,42 +435,50 @@
           this.errorMessages = [];
 
           // si el nombre del producto es vacio
-          if(!this.name) this.errorMessages.push("El nombre no puede estar vacio");          
-          if(this.category_id == 0) this.errorMessages.push("Debes seleccionar una categoria");    
-          if(!this.stock) this.errorMessages.push("El stock del articulo debe ser un numero y no puede estar vacio");    
-          if(!this.sale_price) this.errorMessages.push("El precio del articulo debe ser un numero y no puede estar vacio");    
-          
-          // si existe un mensaje de error, la variable se activa 
-          if(this.errorMessages.length) this.errorDetection = true;   
-          
+          if(!this.name) this.errorMessages.push("El nombre no puede estar vacio");
+          if(this.category_id == 0) this.errorMessages.push("Debes seleccionar una categoria");
+          if(!this.stock) this.errorMessages.push("El stock del articulo debe ser un numero y no puede estar vacio");
+          if(!this.sale_price) this.errorMessages.push("El precio del articulo debe ser un numero y no puede estar vacio");
+
+          // si existe un mensaje de error, la variable se activa
+          if(this.errorMessages.length) this.errorDetection = true;
+
           return this.errorDetection;
         },
 
         actualizar(){
 
           let me=this;
-
           if(this.validar())
             return;
-      
-          axios.put('/article/update',{
-            'name'         : this.name,
-            'description'  : this.description,
-            'category_id'  : this.category_id,
-            'code'         : this.code,
-            'stock'        : this.stock,
-            'sale_price'   : this.sale_price,
-            'id'           : this.article_id
-            }).then(function (response) {
-              me.cerrarModal();
-              me.listar(1,'','nombre');
-            }).catch(function (error) {
-              console.log(error.response);
+          const config = {
+            headers: { 'content-type': 'multipart/form-data' }
+          }
+          let formData = new FormData();
+          formData.append('id', parseInt(this.article_id)),
+          formData.append('name', this.name);
+          formData.append('description', this.description);
+          formData.append('category_id', this.category_id);
+          formData.append('code', this.code);
+          formData.append('stock', this.stock);
+          formData.append('sale_price', this.sale_price);
+          for( let i = 0; i < this.images.length; i++ ){
+            formData.append('images['+i+']', this.images[i])
+          }
+
+          axios.post('/article/update',formData,config).then(function (response) {
+            me.cerrarModal();
+            me.listar(1,'','nombre');
+          }).catch(function (error) {
+            swal("Ha ocurrido un error al desactivar este producto",{
+              icon: "error"
             });
+            console.log(error);
+          });
         },
 
         desactivar(id){
-          
+
           swal({
             title: "¿Deseas desactivar este articulo?",
             text: "Podrás deshacer esta accion cuando lo desees",
@@ -464,11 +491,11 @@
 
               let me = this;
               // hacemos una peticion http para desactivar la categoria
-              
+
               axios.put('/article/disable',{
                 'id': id
                 }).then(function (response) {
-                  
+
                   me.listar(1,'','nombre');
                   swal("Producto desactivado!", {
                     icon: "success",
@@ -486,12 +513,12 @@
         },
 
         activar(id){
-          
+
           let me = this;
           axios.put('/article/enable',{
             'id': id
             }).then(function (response) {
-              
+
               me.listar(1,'','nombre');
               swal("Activada correctamente!", {
                 icon: "success",
@@ -513,7 +540,7 @@
           let me = this;
           // actualiza  la pagina actual
           me.pagination.current_page = pageNumber;
-          me.listar(pageNumber, text, criteria); 
+          me.listar(pageNumber, text, criteria);
         }
       },
       mounted() {
@@ -536,7 +563,7 @@
     opacity: 1 !important;
     position: absolute !important;
     background-color: #3c29297a !important;
-  } 
+  }
   .div-error{
     display: flex;
     justify-content: center;
